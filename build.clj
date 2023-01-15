@@ -18,6 +18,4 @@
   (b/uber {:class-dir class-dir
            :uber-file uber-file
            :basis basis
-           :main 'shorturl.router}))
-
-(uber nil)
+           :main 'shorturl.server}))

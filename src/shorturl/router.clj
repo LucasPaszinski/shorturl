@@ -10,8 +10,8 @@
             [ring.util.response :as resp]
             [ring.adapter.jetty :as jetty]
             [muuntaja.core :as m]
-            [shorturl.redirects :as redirects])
-  (:gen-class))
+            [shorturl.redirects :as redirects]))
+
 
 (def app
   (ring/ring-handler
@@ -20,13 +20,17 @@
       {:post {:summary "create a new slug for redirecting the url"
               :parameters {:body {:url string?}}
               :responses {201 {:body {:slug string?}}}
-              :handler (fn [{{{:keys [url]} :body} :parameters :as req}]
-                         (resp/created "/api/shorty" {:slug (redirects/create-short-link url)}))}}]
+              :handler (fn [{{{:keys [url]} :body} :parameters}]
+                         (resp/created
+                          "/api/shorty"
+                          {:slug (redirects/create-short-link url)}))}}]
 
      ["/:slug"
       {:get {:summary "given a valid slug redirects the user to url"
              :parameters {:path-params {:slug string?}}
-             :handler (fn [{{:keys [slug]} :path-params :as req}]
+             :responses {302 {}
+                         404 {}}
+             :handler (fn [{{:keys [slug]} :path-params}]
                         (if-let [url (redirects/get-url-by-slug slug)]
                           (resp/redirect (str "http://" url))
                           (resp/not-found {})))}}]]
@@ -47,13 +51,4 @@
                          multipart/multipart-middleware]}})))
 
 
-(defn start []
-  (jetty/run-jetty #'app {:port 3000, :join? false})
-  (println "server running in port 3000"))
-
-(defn -main []
-  (start))
-
-(comment
-  (def server (start))
-  (.stop server))
+(defn start [] (jetty/run-jetty #'app {:port 8080, :join? false}))
