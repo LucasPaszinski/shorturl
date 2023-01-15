@@ -1,28 +1,49 @@
 (ns shorturl.redirects
-  (:require [honey.sql :as sql]
-            [shorturl.db :as db]))
+  (:require [clojure.string :as s]
+            [honey.sql :as sql]
+            [shorturl.db :as db]
+            [shorturl.redirects :as redirects]
+            [shorturl.gen :refer [encode decode]]))
 
 (defn index-redirects []
   (->> {:select :* :from :redirects}
        (sql/format)
        (db/query)))
 
-(defn get-by-slug [slug]
-  (->> {:select [:url]
-        :where [:= :slug slug]
+(defn get-by [key val]
+  (->> {:select [:*]
+        :where [:= key val]
         :from :redirects}
        (sql/format)
-       (db/query)
+       (db/query)))
+
+(defn get-url-by-slug [slug]
+  (->> (decode slug)
+       (get-by :id)
        (first)
        (:url)))
 
-(defn create-short-link [slug url]
+(defn get-slug-by-url [url]
+  (->> (get-by :url url)
+       (first)
+       (:id)
+       (encode)))
+
+(defn- prepare-url [url]
+  (cond (s/starts-with? url "https://") (s/replace-first url "https://" "")
+        (s/starts-with? url "http://") (s/replace-first url "http://" "")
+        :else url))
+
+(defn- insert-short-link [url]
   (->> {:insert-into [:redirects]
-        :values [{:slug slug :url url}]}
+        :values [{:url (prepare-url url)}]}
        (sql/format)
        (db/insert)))
 
-(comment
-  (create-short-link "abc" "https//www.google.com")
-  (get-by-slug "abc")
-  (index-redirects))
+(defn create-short-link [url]
+  (try (encode (insert-short-link url))
+       (catch Exception _ (get-slug-by-url url))))
+
+(comment (create-short-link "www.github.com/LucasPaszinski/aoc22"))
+(comment (get-url-by-slug "9"))
+(comment (index-redirects))

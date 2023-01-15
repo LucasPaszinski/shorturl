@@ -3,3 +3,4 @@
 /.cpcache/*
 .env.edn
 .nrepl-port
+/.lsp/*
