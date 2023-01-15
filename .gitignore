@@ -4,3 +4,4 @@
 .env.edn
 .nrepl-port
 /.lsp/*
+/target/*

@@ -2,7 +2,6 @@
   (:require [clojure.string :as s]
             [honey.sql :as sql]
             [shorturl.db :as db]
-            [shorturl.redirects :as redirects]
             [shorturl.gen :refer [encode decode]]))
 
 (defn index-redirects []

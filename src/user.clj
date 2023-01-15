@@ -15,6 +15,8 @@
 (defn rollback []
   (rag/rollback (config)))
 
+(migrate)
+
 (comment
   (migrate)
   (rollback))

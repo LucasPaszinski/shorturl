@@ -7,4 +7,7 @@
         dev.weavejester/ragtime {:mvn/version "0.9.3"}
         ring/ring-core {:mvn/version "1.9.6"}
         ring/ring-jetty-adapter {:mvn/version "1.8.2"}
-        hiccup/hiccup {:mvn/version "1.0.5"}}}
+        hiccup/hiccup {:mvn/version "1.0.5"}
+        org.clojure/tools.build {:mvn/version "0.9.1"}}
+ :build {:deps {io.github.clojure/tools.build {:git/tag "v0.9.1" :git/sha "27ff8a4"}}
+         :ns-default build}}
