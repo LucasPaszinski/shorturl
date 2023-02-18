@@ -4,5 +4,11 @@
 
 (def mysql-db (:db (edn/read-string (slurp ".env.edn"))))
 
-(defn query [q]  (j/query mysql-db q))
-(defn insert [q] (:generated_key (j/execute! mysql-db q {:return-keys ["id"]})))
+(defn query [q] 
+  (j/query mysql-db q))
+
+(defn insert [q]
+  (-> mysql-db
+      (j/execute! q {:return-keys ["id"]})
+      (:generated_key)))
+      

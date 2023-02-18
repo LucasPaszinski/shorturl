@@ -1,8 +1,8 @@
-(ns shorturl.redirects
+(ns shorturl.core.redirects
   (:require [clojure.string :as s]
             [honey.sql :as sql]
             [shorturl.db :as db]
-            [shorturl.gen :refer [encode decode]]))
+            [shorturl.core.gen :refer [encode decode]]))
 
 (defn index-redirects []
   (->> {:select :* :from :redirects}

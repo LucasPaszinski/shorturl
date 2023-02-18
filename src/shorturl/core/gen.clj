@@ -1,4 +1,4 @@
-(ns shorturl.gen
+(ns shorturl.core.gen
   (:require [clojure.string :as str]))
 
 (def base 62)
