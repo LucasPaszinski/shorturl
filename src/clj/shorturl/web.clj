@@ -11,7 +11,11 @@
             [ring.util.response :as resp]
             [ring.adapter.jetty :as jetty]
             [muuntaja.core :as m]
-            [shorturl.core.redirects :as redirects]))
+            [shorturl.core.redirects :as redirects]
+            [clojure.java.io :as io]))
+
+(defn index []
+  (slurp (io/resource "public/index.html")))
 
 (def router-config
   {:conflicts nil
@@ -29,25 +33,20 @@
                        coercion/coerce-request-middleware
                        multipart/multipart-middleware]}})
 
-(def router (ring/router
-             [["/api/shorty"
-               {:post {:summary "create a new slug for redirecting the url"
-                       :parameters {:body {:url string?}}
-                       :responses {201 {:body {:slug string?}}}
-                       :handler (fn [{{{:keys [url]} :body} :parameters}]
-                                  (resp/created
-                                   "/api/shorty"
-                                   {:slug (redirects/create-short-link url)}))}}]
+(def l (atom {}))
 
-              ["/:slug"
-               {:get {:summary "given a valid slug redirects the user to url"
-                      :parameters {:path-params {:slug string?}}
-                      :responses {302 {}
-                                  404 {}}
-                      :handler (fn [{{:keys [slug]} :path-params}]
+(def router (ring/router
+             [["/assets/*" (ring/create-resource-handler {:root "public/assets"})]
+              ["/api/shorty" {:post (fn [{{:keys [url]} :body-params}]
+                                      (resp/created
+                                       "/api/shorty"
+                                       {:slug (redirects/create-short-link url)}))}]
+
+              ["/:slug" {:get  (fn [{{:keys [slug]} :path-params}]
                                  (if-let [url (redirects/get-url-by-slug slug)]
                                    (resp/redirect (str "http://" url))
-                                   (resp/not-found {})))}}]]
+                                   (resp/not-found {})))}]
+              ["/" {:handler (fn [_req] {:body (index) :status 200})}]]
              router-config))
 
 (def app (ring/ring-handler router))
@@ -55,11 +54,10 @@
 (defn start []
   (jetty/run-jetty #'app {:port 8080, :join? false}))
 
-(start)
+(def server (start))
 
 (comment
   (r/match-by-path router "/api/shorty")
-  (r/match-by-path router "/1")
+  (r/match-by-path router "")
+  (app {:request-method :post :uri "/api/shorty" :body {:url "www.google.com/api"}})
   (app {:request-method :get :uri "/1"}))
-
-

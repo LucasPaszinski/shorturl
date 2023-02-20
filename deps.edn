@@ -1,4 +1,4 @@
-{:paths ["src/clj", "src/cljs"]
+{:paths ["src/clj", "src/cljs" "resources"]
  :deps {org.clojure/clojure {:mvn/version "1.11.1"}
         org.clojure/core.async {:mvn/version "1.6.673"}
         org.clojure/data.json {:mvn/version "2.4.0"}
@@ -14,6 +14,9 @@
         org.apache.kafka/kafka-clients {:mvn/version "2.8.0"}
         ring/ring-core {:mvn/version "1.9.6"}
         ring/ring-jetty-adapter {:mvn/version "1.8.2"}}
- :aliases {:cljs {:extra-deps {thheller/shadow-cljs {:mvn/version "2.21.0"}}}
+ :aliases {:cljs {:extra-deps {thheller/shadow-cljs {:mvn/version "2.19.9"}
+                               lilactown/helix {:mvn/version "0.1.9"}
+                               funcool/promesa {:mvn/version "10.0.594"}}}
+
            :build {:deps {io.github.clojure/tools.build {:git/tag "v0.9.1" :git/sha "27ff8a4"}}
                    :ns-default build}}}

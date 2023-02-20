@@ -1,0 +1,26 @@
+{
+  "name": "shorturl",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LucasPaszinski/shorturl.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LucasPaszinski/shorturl/issues"
+  },
+  "homepage": "https://github.com/LucasPaszinski/shorturl#readme",
+  "devDependencies": {
+    "shadow-cljs": "^2.21.0"
+  },
+  "dependencies": {
+    "react-dom": "^18.2.0"
+  }
+}
