@@ -5,7 +5,8 @@
             [shorturl.core.gen :refer [encode decode]]))
 
 (defn index-redirects []
-  (->> {:select :* :from :redirects}
+  (->> {:select :*
+        :from :redirects}
        (sql/format)
        (db/query)))
 
@@ -29,9 +30,10 @@
        (encode)))
 
 (defn- prepare-url [url]
-  (cond (s/starts-with? url "https://") (s/replace-first url "https://" "")
-        (s/starts-with? url "http://") (s/replace-first url "http://" "")
-        :else url))
+  (-> url
+      (s/trim)
+      (s/replace-first #"https://|http://" "")))
+
 
 (defn- insert-short-link [url]
   (->> {:insert-into [:redirects]
@@ -43,6 +45,9 @@
   (try (encode (insert-short-link url))
        (catch Exception _ (get-slug-by-url url))))
 
-(comment (create-short-link "www.github.com/LucasPaszinski/aoc22"))
-(comment (get-url-by-slug "9"))
-(comment (index-redirects))
+(comment
+  (create-short-link "www.github.com/LucasPaszinski/aoc22")
+  (get-url-by-slug "9")
+  (index-redirects)
+  ;;stop
+  )
